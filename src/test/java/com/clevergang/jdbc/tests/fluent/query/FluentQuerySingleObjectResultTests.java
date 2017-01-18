@@ -27,7 +27,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
@@ -44,16 +44,16 @@ import static org.hamcrest.CoreMatchers.*;
  *
  * @author Bretislav Wajtr
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {TestSpringContext.class})
 @Transactional
+@Rollback
 public class FluentQuerySingleObjectResultTests {
 
     @Autowired
     private FluentNamedParameterJdbcTemplate jdbc;
 
     @Test
-    @Rollback
     public void testQuerySinglePrimitiveNumberResult() {
         // original code
         String query = "SELECT count(*) FROM users";
@@ -71,7 +71,6 @@ public class FluentQuerySingleObjectResultTests {
     }
 
     @Test
-    @Rollback
     public void testQuerySinglePrimitiveStringResult() {
         // original code
         String query = "SELECT name FROM users WHERE ID = 1";
@@ -89,7 +88,6 @@ public class FluentQuerySingleObjectResultTests {
     }
 
     @Test
-    @Rollback
     public void testQuerySinglePrimitiveDateResult() {
         // original code
         String query = "SELECT BIRTH_DATE FROM users WHERE ID = 1";
@@ -107,7 +105,6 @@ public class FluentQuerySingleObjectResultTests {
     }
 
     @Test
-    @Rollback
     public void testQuerySinglePrimitiveSQLDateResult() {
         // original code
         String query = "SELECT BIRTH_DATE FROM users WHERE ID = 1";
@@ -125,7 +122,6 @@ public class FluentQuerySingleObjectResultTests {
     }
 
     @Test
-    @Rollback
     public void testQuerySinglePrimitiveUtilDateResult() throws ParseException {
         // original code
         String query = "SELECT BIRTH_DATE FROM users WHERE ID = 1";
@@ -143,7 +139,6 @@ public class FluentQuerySingleObjectResultTests {
     }
 
     @Test
-    @Rollback
     public void testQuerySinglePrimitiveDateTimeResult() {
         // original code
         String query = "SELECT TIME_OF_DEATH FROM users WHERE ID = 1";
@@ -161,7 +156,6 @@ public class FluentQuerySingleObjectResultTests {
     }
 
     @Test
-    @Rollback
     public void testQuerySingleCustomClassResult() throws Throwable {
         // original code
         String query = "SELECT * FROM users WHERE ID = 1";
@@ -183,7 +177,6 @@ public class FluentQuerySingleObjectResultTests {
     }
 
     @Test
-    @Rollback
     public void testQuerySingleResultUsingMapper() {
         // original code
         String query = "SELECT name, email FROM users WHERE ID = 1";

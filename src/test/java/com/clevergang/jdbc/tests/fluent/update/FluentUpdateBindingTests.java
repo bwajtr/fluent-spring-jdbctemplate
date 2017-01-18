@@ -24,7 +24,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -34,16 +34,16 @@ import static org.hamcrest.CoreMatchers.*;
  *
  * @author Bretislav Wajtr
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {TestSpringContext.class})
 @Transactional
+@Rollback
 public class FluentUpdateBindingTests {
 
     @Autowired
     private FluentNamedParameterJdbcTemplate jdbc;
 
     @Test
-    @Rollback
     public void testUpdateBindSingleNumberParameter() {
         jdbc.update("UPDATE USERS SET name = NULL WHERE id = :id")
                 .bind("id", 2)
@@ -55,7 +55,6 @@ public class FluentUpdateBindingTests {
     }
 
     @Test
-    @Rollback
     public void testUpdateBindMultipleParameters() {
         jdbc.update("UPDATE USERS SET name = :name WHERE id = :id")
                 .bind("name", "alexUpdated")
@@ -68,7 +67,6 @@ public class FluentUpdateBindingTests {
     }
 
     @Test
-    @Rollback
     public void testUpdateBindMultipleParametersReverseOrder() {
         jdbc.update("UPDATE USERS SET name = :name WHERE id = :id")
                 .bind("id", 2)
@@ -81,7 +79,6 @@ public class FluentUpdateBindingTests {
     }
 
     @Test
-    @Rollback
     public void testInsertBindSingleNumberParameter() {
         jdbc.update("INSERT INTO USERS (ID) VALUES (:id)")
                 .bind("id", 4)
@@ -93,7 +90,6 @@ public class FluentUpdateBindingTests {
     }
 
     @Test
-    @Rollback
     public void testInsertBindMultipleParameters() {
         jdbc.update("INSERT INTO USERS (ID, NAME) VALUES (:id, :name)")
                 .bind("id", 4)
@@ -106,7 +102,6 @@ public class FluentUpdateBindingTests {
     }
 
     @Test
-    @Rollback
     public void testDeleteBindSingleNumberParameter() {
         jdbc.update("DELETE FROM USERS where id = :id")
                 .bind("id", 3)
@@ -118,7 +113,6 @@ public class FluentUpdateBindingTests {
     }
 
     @Test
-    @Rollback
     public void testDeleteBindMultipleParameters() {
         jdbc.update("DELETE FROM USERS where id = :id and name = :name")
                 .bind("id", 3)

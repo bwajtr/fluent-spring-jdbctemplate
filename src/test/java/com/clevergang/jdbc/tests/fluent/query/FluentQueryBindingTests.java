@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -38,16 +38,16 @@ import static org.hamcrest.CoreMatchers.equalTo;
  *
  * @author Bretislav Wajtr
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {TestSpringContext.class})
 @Transactional
+@Rollback
 public class FluentQueryBindingTests {
 
     @Autowired
     private FluentNamedParameterJdbcTemplate jdbc;
 
     @Test
-    @Rollback
     public void testBindSingleNumberParameter() {
         // original code
         String query = "SELECT name FROM users WHERE id = :id";
@@ -66,7 +66,6 @@ public class FluentQueryBindingTests {
     }
 
     @Test
-    @Rollback
     public void testBindTwoNumberParameters() {
         // original code
         String query = "SELECT name FROM users WHERE id > :id1 AND id < :id2";
@@ -87,7 +86,6 @@ public class FluentQueryBindingTests {
     }
 
     @Test
-    @Rollback
     public void testBindTwoNumberAndOneStringParameters() {
         // original code
         String query = "SELECT name FROM users WHERE id > :id1 AND id < :id2 AND name LIKE :nameTemplate";
@@ -110,7 +108,6 @@ public class FluentQueryBindingTests {
     }
 
     @Test
-    @Rollback
     public void testBindDateParameter() {
         // original code
         String query = "SELECT name FROM users WHERE BIRTH_DATE < :maxDate";

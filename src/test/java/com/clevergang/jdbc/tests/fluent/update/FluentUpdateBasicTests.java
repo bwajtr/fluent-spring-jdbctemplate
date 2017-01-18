@@ -24,7 +24,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -36,16 +36,16 @@ import static org.hamcrest.CoreMatchers.equalTo;
  *
  * @author Bretislav Wajtr
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {TestSpringContext.class})
 @Transactional
+@Rollback
 public class FluentUpdateBasicTests {
 
     @Autowired
     private FluentNamedParameterJdbcTemplate jdbc;
 
     @Test
-    @Rollback
     public void testUpdateNoBindings() {
         jdbc.update("UPDATE USERS SET name = 'updated'")
                 .execute();
@@ -56,7 +56,6 @@ public class FluentUpdateBasicTests {
     }
 
     @Test
-    @Rollback
     public void testDeleteNoBindings() {
         jdbc.update("DELETE FROM USERS")
                 .execute();

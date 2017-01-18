@@ -27,7 +27,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
@@ -44,16 +44,16 @@ import static org.hamcrest.CoreMatchers.*;
  *
  * @author Bretislav Wajtr
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {TestSpringContext.class})
 @Transactional
+@Rollback
 public class FluentQueryListResultTests {
 
     @Autowired
     private FluentNamedParameterJdbcTemplate jdbc;
 
     @Test
-    @Rollback
     public void testQueryListCustomClassResult() {
         // original code
         String query = "SELECT * FROM users ORDER BY id";
@@ -93,7 +93,6 @@ public class FluentQueryListResultTests {
     }
 
     @Test
-    @Rollback
     public void testQueryListOfIntegersResult() {
         // original code
         String query = "SELECT id FROM users ORDER BY id";
@@ -118,7 +117,6 @@ public class FluentQueryListResultTests {
     }
 
     @Test
-    @Rollback
     public void testQueryListOfStringsResult() {
         // original code
         String query = "SELECT name FROM users ORDER BY id";
@@ -142,7 +140,6 @@ public class FluentQueryListResultTests {
     }
 
     @Test
-    @Rollback
     public void testQueryListOfUtilDateResult() {
         // original code
         String query = "SELECT BIRTH_DATE FROM users ORDER BY id";
@@ -169,7 +166,6 @@ public class FluentQueryListResultTests {
 
     @SuppressWarnings("StringBufferReplaceableByString")
     @Test
-    @Rollback
     public void testQueryListResultUsingMapper() {
         // original code
         String query = "SELECT id, name, email FROM users";
