@@ -36,12 +36,21 @@ import java.util.List;
  * }</pre>
  *
  * @author Bretislav Wajtr
+ * @implNote Not thread safe
  */
 public class FluentQueryBuilder extends AbstractFluentBuilder<FluentQueryBuilder> {
 
-    private String query;
-    private NamedParameterJdbcOperations baseTemplate;
+    private final String query;
+    private final NamedParameterJdbcOperations baseTemplate;
 
+    /**
+     * Creates new FluentQueryBuilder using given "query" and namedParameterTemplate.
+     * Note that FluentQueryBuilder class is designed to be created for each query and due to the mutable nature
+     * of bind parameters it's not recommended to share instances of FluentQueryBuilder by threads (== not thread safe).
+     *
+     * @param query Query to be executed
+     * @param namedParameterTemplate Template to be used for query execution
+     */
     public FluentQueryBuilder(String query, NamedParameterJdbcOperations namedParameterTemplate) {
         this.query = query;
         this.baseTemplate = namedParameterTemplate;
@@ -127,7 +136,7 @@ public class FluentQueryBuilder extends AbstractFluentBuilder<FluentQueryBuilder
      * <ul>
      * <li>In a case that the parameter is one of the primitive wrapper classes or one
      * of the classes which are directly convertible to the SQL types, then the this method
-     * will expect that the SQL query will return single column resultset (returning single value for each row)
+     * will expect that the SQL query will return single column ResultSet (returning single value for each row)
      * and will try to map each row from the SQL result directly to the primitive type. Example:
      * <pre>{@code
      * List<String> employeeNames = jdbc.query("SELECT name FROM employees")

@@ -27,6 +27,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
  *
  * @author Bretislav Wajtr
  */
+@SuppressWarnings("WeakerAccess") // Leave interface public because NamedParameterJdbcOperations is also public, conformity
 public interface FluentNamedParameterJdbcOperations extends NamedParameterJdbcOperations {
 
     /**

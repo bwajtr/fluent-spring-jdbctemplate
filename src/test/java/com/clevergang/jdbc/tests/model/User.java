@@ -25,6 +25,7 @@ import java.util.Objects;
  *
  * @author Bretislav Wajtr
  */
+@SuppressWarnings("unused")  // Because it's just model class, not all getters/setters have to be directly used
 public class User {
     private Integer id;
     private String name;

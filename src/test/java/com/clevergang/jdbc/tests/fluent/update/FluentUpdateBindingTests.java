@@ -49,7 +49,7 @@ public class FluentUpdateBindingTests {
                 .bind("id", 2)
                 .execute();
 
-        // check postconditions
+        // check post-conditions
         String name = jdbc.query("select name from users where id = :id").bind("id", 2).fetchOne(String.class);
         Assert.assertThat(name, is(nullValue()));
     }
@@ -61,7 +61,7 @@ public class FluentUpdateBindingTests {
                 .bind("id", 2)
                 .execute();
 
-        // check postconditions
+        // check post-conditions
         String name = jdbc.query("select name from users where id = :id").bind("id", 2).fetchOne(String.class);
         Assert.assertThat(name, equalTo("alexUpdated"));
     }
@@ -73,7 +73,7 @@ public class FluentUpdateBindingTests {
                 .bind("name", "alexUpdated2")
                 .execute();
 
-        // check postconditions
+        // check post-conditions
         String name = jdbc.query("select name from users where id = :id").bind("id", 2).fetchOne(String.class);
         Assert.assertThat(name, equalTo("alexUpdated2"));
     }
@@ -84,7 +84,7 @@ public class FluentUpdateBindingTests {
                 .bind("id", 4)
                 .execute();
 
-        // check postconditions
+        // check post-conditions
         Integer count = jdbc.query("SELECT COUNT(*) from USERS").fetchOne(Integer.class);
         Assert.assertThat(count, equalTo(4));
     }
@@ -96,7 +96,7 @@ public class FluentUpdateBindingTests {
                 .bind("name", "someName")
                 .execute();
 
-        // check postconditions
+        // check post-conditions
         Integer count = jdbc.query("SELECT COUNT(*) from USERS").fetchOne(Integer.class);
         Assert.assertThat(count, equalTo(4));
     }
@@ -107,7 +107,7 @@ public class FluentUpdateBindingTests {
                 .bind("id", 3)
                 .execute();
 
-        // check postconditions
+        // check post-conditions
         Integer count = jdbc.query("SELECT COUNT(*) from USERS").fetchOne(Integer.class);
         Assert.assertThat(count, equalTo(2));
     }
@@ -119,7 +119,7 @@ public class FluentUpdateBindingTests {
                 .bind("name", "joel")
                 .execute();
 
-        // check postconditions
+        // check post-conditions
         Integer count = jdbc.query("SELECT COUNT(*) from USERS").fetchOne(Integer.class);
         Assert.assertThat(count, equalTo(2));
     }

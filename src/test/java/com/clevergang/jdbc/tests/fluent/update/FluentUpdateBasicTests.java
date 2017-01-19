@@ -50,7 +50,7 @@ public class FluentUpdateBasicTests {
         jdbc.update("UPDATE USERS SET name = 'updated'")
                 .execute();
 
-        // check postconditions
+        // check post-conditions
         List<String> name = jdbc.query("SELECT name FROM users").fetch(String.class);
         name.forEach(s -> Assert.assertThat(s, equalTo("updated")));
     }
@@ -60,7 +60,7 @@ public class FluentUpdateBasicTests {
         int updatedRows = jdbc.update("UPDATE USERS SET name = 'updated'")
                 .execute();
 
-        // check postconditions
+        // check post-conditions
         Assert.assertThat(updatedRows, equalTo(3));
     }
 
@@ -70,7 +70,7 @@ public class FluentUpdateBasicTests {
         jdbc.update("DELETE FROM USERS")
                 .execute();
 
-        // check postconditions
+        // check post-conditions
         Integer count = jdbc.query("SELECT COUNT(*) from USERS").fetchOne(Integer.class);
         Assert.assertThat(count, equalTo(0));
     }

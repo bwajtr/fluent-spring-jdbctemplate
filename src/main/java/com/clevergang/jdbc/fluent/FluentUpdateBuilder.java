@@ -24,7 +24,7 @@ import org.springframework.util.Assert;
 import java.util.Map;
 
 /**
- * Fluent style builder for execution of statements which update the database state (INSERT, UPDATE, DELETE operations).
+ * Fluent style builder for execution of  statements which update the database state (INSERT, UPDATE, DELETE operations).
  * This builder is initialized with the given SQL statement, provides methods for binding query parameters and offers
  * various methods for final query execution. Example usage:
  * <pre>{@code
@@ -35,12 +35,21 @@ import java.util.Map;
  * }</pre>
  *
  * @author Bretislav Wajtr
+ * @implNote Not thread safe
  */
 public class FluentUpdateBuilder extends AbstractFluentBuilder<FluentUpdateBuilder> {
 
     private final String statement;
     private final NamedParameterJdbcOperations baseTemplate;
 
+    /**
+     * Creates new FluentUpdateBuilder using given "query" and namedParameterTemplate.
+     * Note that FluentUpdateBuilder class is designed to be created for each statement and due to the mutable nature
+     * of bind parameters it's not recommended to share instances of FluentUpdateBuilder by threads (== not thread safe).
+     *
+     * @param statement SQL statement to be executed
+     * @param namedParameterTemplate Template to be used for statement execution
+     */
     public FluentUpdateBuilder(String statement, NamedParameterJdbcOperations namedParameterTemplate) {
         this.statement = statement;
         this.baseTemplate = namedParameterTemplate;

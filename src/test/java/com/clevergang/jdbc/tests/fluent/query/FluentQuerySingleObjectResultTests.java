@@ -181,27 +181,18 @@ public class FluentQuerySingleObjectResultTests {
         // original code
         String query = "SELECT name, email FROM users WHERE ID = 1";
         EmptySqlParameterSource params = EmptySqlParameterSource.INSTANCE;
-        String userName = jdbc.queryForObject(query, params, (rs, rowNum) -> {
-            StringBuilder builder = new StringBuilder();
-            builder.append(rs.getString("name"));
-            builder.append(" (");
-            builder.append(rs.getString("email"));
-            builder.append(")");
-            return builder.toString();
-        });
+        String userName = jdbc.queryForObject(query, params, (rs, rowNum) ->
+                rs.getString("name") + " (" + rs.getString("email") + ")"
+        );
 
         Assert.assertThat(userName, is(notNullValue()));
         Assert.assertThat(userName, equalTo("mkyong (mkyong@gmail.com)"));
 
         // fluent code
         String userName2 = jdbc.query("SELECT name, email FROM users WHERE ID = 1")
-                .fetchOne((rs, rowNum) -> {
-                    StringBuilder builder = new StringBuilder();
-                    builder.append(rs.getString("name"));
-                    builder.append(" ");
-                    builder.append(rs.getString("email"));
-                    return builder.toString();
-                });
+                .fetchOne((rs, rowNum) ->
+                        rs.getString("name") + " " + rs.getString("email")
+                );
 
         Assert.assertThat(userName2, equalTo("mkyong mkyong@gmail.com"));
     }
