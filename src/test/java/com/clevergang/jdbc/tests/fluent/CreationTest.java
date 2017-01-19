@@ -43,7 +43,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 @ContextConfiguration(classes = {TestSpringContext.class})
 @Transactional
 @Rollback
-public class CreationTests {
+public class CreationTest {
 
     @Autowired
     private DataSource dataSource;

@@ -40,7 +40,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 @ContextConfiguration(classes = {TestSpringContext.class})
 @Transactional
 @Rollback
-public class FluentUpdateBasicTests {
+public class FluentUpdateBasicTest {
 
     @Autowired
     private FluentNamedParameterJdbcTemplate jdbc;

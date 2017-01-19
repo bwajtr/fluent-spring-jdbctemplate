@@ -48,7 +48,7 @@ import static org.hamcrest.CoreMatchers.*;
 @ContextConfiguration(classes = {TestSpringContext.class})
 @Transactional
 @Rollback
-public class FluentQuerySingleObjectResultTests {
+public class FluentQuerySingleObjectResultTest {
 
     @Autowired
     private FluentNamedParameterJdbcTemplate jdbc;
