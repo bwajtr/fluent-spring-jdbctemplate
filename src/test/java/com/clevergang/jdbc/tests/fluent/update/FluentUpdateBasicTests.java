@@ -32,7 +32,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.equalTo;
 
 /**
- * The very basic tsting of FluentUpdateBuilder - mostly executions without any bound parameters
+ * The very basic testing of FluentUpdateBuilder - mostly executions without any bound parameters
  *
  * @author Bretislav Wajtr
  */
@@ -54,6 +54,16 @@ public class FluentUpdateBasicTests {
         List<String> name = jdbc.query("SELECT name FROM users").fetch(String.class);
         name.forEach(s -> Assert.assertThat(s, equalTo("updated")));
     }
+
+    @Test
+    public void testUpdateReturnResultNoBindings() {
+        int updatedRows = jdbc.update("UPDATE USERS SET name = 'updated'")
+                .execute();
+
+        // check postconditions
+        Assert.assertThat(updatedRows, equalTo(3));
+    }
+
 
     @Test
     public void testDeleteNoBindings() {

@@ -26,28 +26,14 @@ import org.springframework.util.Assert;
 import java.util.List;
 
 /**
- * To get single object:
- *
- * jdbc.query("SELECT * from Users where id = :idParam")
- *  .bind("idParam", 1)
- *  .fetchOne(User.class)
- *
- * or to get list of objects:
- *
- * jdbc.query("SELECT * from Users where id > :idParam")
- *  .bind("idParam", 1)
- *  .fetch(User.class)
- *
- * or to get list of objects with custom mapping:
- *
- * jdbc.query("SELECT id, name, email FROM users")
- *  .fetch((rs, rowNum) -> {
- *           User ret = new User();
- *           ret.setId(rs.getInt("id"));
- *           ret.setName(rs.getString("name"));
- *           ret.setEmail(rs.getString("email"));
- *           return ret;
- *        });
+ * Fluent style builder for execution of the SQL queries (SQL SELECT statements). This builder is initialized with the given
+ * SQL statement, provides methods for binding query parameters and offers methods for final query execution. Some of the provided
+ * methods provide possibility of returning generated key. Example:
+ * <pre>{@code
+ *  User user = jdbc.query("SELECT * FROM users WHERE id = :id")
+ *                  .bind("id", 1)
+ *                  .fetchOne(User.class);
+ * }</pre>
  *
  * @author Bretislav Wajtr
  */
@@ -61,12 +47,60 @@ public class FluentQueryBuilder extends AbstractFluentBuilder<FluentQueryBuilder
         this.baseTemplate = namedParameterTemplate;
     }
 
+    /**
+     * Executes prepared SQL query, returning single result object. The query is expected to be a single row query; the SQL ResultSet will be mapped
+     * to Java class using provided RowMapper. Example:<br/>
+     * <pre>{@code
+     * EmployeeInfo user = jdbc.query("SELECT count(*) as count, avg(salary) as avg_salary FROM employees")
+     *     .fetchOne((rs, rowNum) -> {
+     *           EmployeeInfo ret = new EmployeeInfo();
+     *           ret.setCount(rs.getInt("count"));
+     *           ret.setAverageSalary(rs.getBigDecimal("avg_salary"));
+     *           return ret;
+     *        });
+     * }</pre>
+     *
+     * @param rowMapper RowMapper to use for JDBC ResultSet mapping to java object
+     * @return Returns single mapped object
+     * @throws org.springframework.dao.IncorrectResultSizeDataAccessException if the query does not return exactly one row, or does not return exactly
+     *                                                                        one column in that row
+     * @throws org.springframework.dao.DataAccessException                    if the query fails
+     */
     public <T> T fetchOne(RowMapper<T> rowMapper) {
         Assert.notNull(rowMapper, "You HAVE TO provide row mapper");
 
         return baseTemplate.queryForObject(query, getBoundParameters(), rowMapper);
     }
 
+    /**
+     * Executes prepared SQL query, returning single result object. This method accepts two types of classes a parameter:<br/>
+     * <ul>
+     * <li>In a case that the parameter is one of the primitive wrapper classes or one
+     * of the classes which are directly convertible to the SQL types, then the this method
+     * will expect that the SQL query is "single row/single column" query (simply returning single value)
+     * and will try to map the SQL result directly to the primitive type. Example:
+     * <pre>{@code
+     * Integer employeeCount = jdbc.query("SELECT count(*) FROM employees")
+     *                             .fetchOne(Integer.class);
+     * }</pre>
+     * </li>
+     * <li>If the class passed in as a parameter is detected to be a ordinary Java POJO (custom class) then this method will
+     * expect that the SQL query in this builder will return just single row with multiple columns, and will try to map this single row
+     * to the POJO class using BeanPropertyRowMapper. Example:
+     * <pre>{@code
+     *  User user = jdbc.query("SELECT * FROM users WHERE id = :id")
+     *                  .bind("id", 1)
+     *                  .fetchOne(User.class);
+     * }</pre>
+     * </li>
+     * </ul>
+     *
+     * @param resultType the type that the result object is expected to match
+     * @return Returns single mapped object
+     * @throws org.springframework.dao.IncorrectResultSizeDataAccessException if the query does not return exactly one row, or in case of primitive types does not return exactly
+     *                                                                        one column in that row
+     * @throws org.springframework.dao.DataAccessException                    if the query fails
+     */
     public <T> T fetchOne(Class<T> resultType) {
         Assert.notNull(resultType, "You HAVE TO provide type to map the result to");
 
@@ -88,6 +122,34 @@ public class FluentQueryBuilder extends AbstractFluentBuilder<FluentQueryBuilder
     }
 
 
+    /**
+     * Executes prepared SQL query, returning list of objects. This method accepts two types of classes as a parameter:<br/>
+     * <ul>
+     * <li>In a case that the parameter is one of the primitive wrapper classes or one
+     * of the classes which are directly convertible to the SQL types, then the this method
+     * will expect that the SQL query will return single column resultset (returning single value for each row)
+     * and will try to map each row from the SQL result directly to the primitive type. Example:
+     * <pre>{@code
+     * List<String> employeeNames = jdbc.query("SELECT name FROM employees")
+     *                          .fetch(String.class);
+     * }</pre>
+     * </li>
+     * <li>If the class passed in as a parameter is detected to be a ordinary Java POJO (custom class) then this method will
+     * expect that the SQL query in this builder will return rows with multiple columns, and will try to map these rows
+     * to the POJO objects using BeanPropertyRowMapper. Example:
+     * <pre>{@code
+     *  List<User> users = jdbc.query("SELECT * FROM users")
+     *                   .fetch(User.class);
+     * }</pre>
+     * </li>
+     * </ul>
+     *
+     * @param resultType the type that the result object is expected to match
+     * @return Returns single mapped object
+     * @throws org.springframework.dao.IncorrectResultSizeDataAccessException if the query does not return exactly one row, or in case of primitive types does not return exactly
+     *                                                                        one column in that row
+     * @throws org.springframework.dao.DataAccessException                    if the query fails
+     */
     public <T> List<T> fetch(Class<T> resultType) {
         Assert.notNull(resultType, "You HAVE TO provide type to map the result to");
 
@@ -98,6 +160,24 @@ public class FluentQueryBuilder extends AbstractFluentBuilder<FluentQueryBuilder
         }
     }
 
+    /**
+     * Executes prepared SQL query, returning list of objects. The query is expected to return zero to many rows; returned rows will be mapped
+     * to Java objects using provided RowMapper. Example:
+     * <pre>{@code
+     * List<User> users = jdbc.query("SELECT id, name, email FROM users")
+     *                  .fetch((rs, rowNum) -> {
+     *                              User ret = new User();
+     *                              ret.setId(rs.getInt("id"));
+     *                              ret.setName(rs.getString("name"));
+     *                              ret.setEmail(rs.getString("email"));
+     *                              return ret;
+     *                          });
+     * }</pre>
+     *
+     * @param rowMapper RowMapper to use for JDBC ResultSet mapping to java object
+     * @return the result List, containing mapped objects
+     * @throws org.springframework.dao.DataAccessException  if the query fails
+     */
     public <T> List<T> fetch(RowMapper<T> rowMapper) {
         Assert.notNull(rowMapper, "You HAVE TO provide row mapper");
 

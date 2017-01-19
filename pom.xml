@@ -11,10 +11,9 @@
     <name>Fluent syntax for Spring JDBCTemplate</name>
     <packaging>jar</packaging>
     <description>
-        This project provides extension to the Spring spring-jdbc library which provides
-        JDBCTemplate - this project provides additional implementation of the JdbcOperations
-        interface (extended from the NamedParameterJdbcTemplate) which offers fluent "Java8 like"
-        style of writing SQL statements and commands.
+        This small library provides a facade to the commonly used NamedParameterJdbcTemplate of the Springs spring-jdbc library,
+        offering fluent "Java8 like" style of writing SQL statements and commands. We do not aim to replace the NamedParameterJdbcTemplate, we
+        just want to extend its functionality and try to offer a simpler way how to use it.
     </description>
     <url>https://github.com/bwajtr/fluent-spring-jdbctemplate</url>
     <inceptionYear>2016</inceptionYear>

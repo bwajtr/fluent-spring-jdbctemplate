@@ -17,6 +17,7 @@
 package com.clevergang.jdbc.tests.fluent.query;
 
 import com.clevergang.jdbc.FluentNamedParameterJdbcTemplate;
+import com.clevergang.jdbc.fluent.FluentQueryBuilder;
 import com.clevergang.jdbc.tests.TestSpringContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -123,6 +124,17 @@ public class FluentQueryBindingTests {
                 .fetchOne(String.class);
 
         Assert.assertThat(userName2, equalTo("mkyong"));
+    }
+
+    @Test
+    public void testModifyBoundParameter() {
+        FluentQueryBuilder builder = jdbc.query("SELECT name FROM users WHERE id = :id")
+                .bind("id", 1);
+
+        builder.getBoundParameters().addValue("id", 2);
+        String name = builder.fetchOne(String.class);
+
+        Assert.assertThat(name, equalTo("alex"));
     }
 
 }

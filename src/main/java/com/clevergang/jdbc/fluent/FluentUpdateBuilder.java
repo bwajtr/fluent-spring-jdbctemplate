@@ -16,6 +16,7 @@
 
 package com.clevergang.jdbc.fluent;
 
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.util.Assert;
@@ -23,6 +24,16 @@ import org.springframework.util.Assert;
 import java.util.Map;
 
 /**
+ * Fluent style builder for execution of statements which update the database state (INSERT, UPDATE, DELETE operations).
+ * This builder is initialized with the given SQL statement, provides methods for binding query parameters and offers
+ * various methods for final query execution. Example usage:
+ * <pre>{@code
+ * jdbc.update("UPDATE users SET name = :name WHERE id = :id")
+ *     .bind("name", "Alex")
+ *     .bind("id", 2)
+ *     .execute();
+ * }</pre>
+ *
  * @author Bretislav Wajtr
  */
 public class FluentUpdateBuilder extends AbstractFluentBuilder<FluentUpdateBuilder> {
@@ -35,10 +46,38 @@ public class FluentUpdateBuilder extends AbstractFluentBuilder<FluentUpdateBuild
         this.baseTemplate = namedParameterTemplate;
     }
 
-    public void execute() {
-        baseTemplate.update(statement, getBoundParameters());
+    /**
+     * Executes prepared update statement (with parameters bound using the bind() methods) and returns number of updated rows.
+     * Example usage:
+     * <pre>{@code
+     * int updatedRowsCount = jdbc.update("UPDATE users SET name = :name WHERE id = :id")
+     *                            .bind("name", "Alex")
+     *                            .bind("id", 2)
+     *                            .execute();
+     * }</pre>
+     * @return the number of rows affected
+     * @throws org.springframework.dao.DataAccessException if there is any problem issuing the update
+     */
+    public int execute() {
+        return baseTemplate.update(statement, getBoundParameters());
     }
 
+    /**
+     * Executes prepared update statement (with parameters bound using the bind() methods) and return generated key.
+     * You have to specify name of the table column, which holds the generated key. A automatic type conversion based on
+     * the return type is attempted. Example usage:
+     * <pre>{@code
+     * Integer key = jdbc.update("INSERT INTO user (name) VALUES (:name)")
+     *                   .bind("name", "Ivan")
+     *                   .executeAndReturnKey("id");
+     * }</pre>
+     *
+     * @param keyName name of the column that will have key generated for it
+     * @return the generated key
+     * @throws org.springframework.dao.DataAccessException if there is any problem issuing the update
+     * @throws InvalidDataAccessApiUsageException if multiple keys are encountered (we normally expect just single key to be generated).
+     * @see GeneratedKeyHolder
+     */
     @SuppressWarnings("unchecked")
     public <T extends Number> T executeAndReturnKey(String keyName) {
         Assert.notNull(keyName);
@@ -49,6 +88,23 @@ public class FluentUpdateBuilder extends AbstractFluentBuilder<FluentUpdateBuild
         return (T) keyHolder.getKey();
     }
 
+    /**
+     * Executes prepared update statement (with parameters bound using the bind() methods) and return generated keys.
+     * You have to specify names of the table columns, which hold the generated keys.  Example usage:
+     * <pre>{@code
+     * Map<String, Object> keys = jdbc.update("INSERT INTO user (name) VALUES (:name)")
+     *                   .bind("name", "Ivan")
+     *                   .executeAndReturnKey("id", "columnWithDefaultValueInDB");
+     *
+     * System.out.println("First key: " + keys.get("id"));
+     * System.out.println("Second key: " + keys.get("columnWithDefaultValueInDB"));
+     * }</pre>
+     *
+     * @param keys names of the columns that will have keys generated for them
+     * @return the Map of generated keys
+     * @throws InvalidDataAccessApiUsageException if keys for multiple rows are encountered
+     * @see GeneratedKeyHolder
+     */
     public Map<String, Object> executeAndReturnKeys(String... keys) {
         Assert.notNull(keys);
 

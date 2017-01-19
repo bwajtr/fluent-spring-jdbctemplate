@@ -20,14 +20,48 @@ import com.clevergang.jdbc.fluent.FluentQueryBuilder;
 import com.clevergang.jdbc.fluent.FluentUpdateBuilder;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 
-// TODO write documentation
-
 /**
+ * This interface is an extension of default Spring NamedParameterJdbcOperations adding
+ * new methods, which allow "fluent" style of interacting with a database. Basically, the intent
+ * of this interface and its methods is to simplify and shorten day to day operations with JDBC.
+ *
  * @author Bretislav Wajtr
  */
 public interface FluentNamedParameterJdbcOperations extends NamedParameterJdbcOperations {
 
+    /**
+     * Creates "fluent" style builder for querying the database (SELECT operations). The builder
+     * provides methods for binding the parameters, provides several methods for configuration
+     * of the mapping from SQL to Java classes and the final execution of the statement. Example usage:
+     * <pre>{@code
+     *  UserBean user = jdbc.query("SELECT * FROM users WHERE id = :id")
+     *                      .bind("id", 1)
+     *                      .fetchOne(UserBean.class);
+     * }</pre>
+     *
+     * @param sql SQL query to execute
+     * @return Returns builder, which provides methods for binding parameters and for
+     * execution of the query
+     * @see FluentQueryBuilder
+     */
     FluentQueryBuilder query(String sql);
 
+    /**
+     * Creates "fluent" style builder for execution of statements which update the database state (INSERT, UPDATE, DELETE operations). The
+     * builder provides methods for binding the parameters and also provides several methods for execution
+     * of the final statement. There is a possibility to return generated keys where appropriate. Example usage:
+     * <pre>{@code
+     * jdbc.update("UPDATE users SET name = :name WHERE id = :id")
+     *     .bind("name", "Alex")
+     *     .bind("id", 2)
+     *     .execute();
+     * }</pre>
+     *
+     * @param sql SQL statement to execute
+     * @return Returns builder, which provides methods for binding parameters and for
+     * execution of the statement
+     * @see FluentUpdateBuilder
+     */
     FluentUpdateBuilder update(String sql);
+
 }
