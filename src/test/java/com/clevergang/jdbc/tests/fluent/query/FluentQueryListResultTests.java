@@ -34,6 +34,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -146,22 +147,21 @@ public class FluentQueryListResultTests {
         EmptySqlParameterSource params = EmptySqlParameterSource.INSTANCE;
         List<java.util.Date> dates = jdbc.queryForList(query, params, java.util.Date.class);
 
-
-        SimpleDateFormat formatter = new SimpleDateFormat("d.M.yyyy");
-
-        Assert.assertThat(dates, is(notNullValue()));
-        Assert.assertThat(formatter.format(dates.get(0)), equalTo("20.5.1980")); //mkyong
-        Assert.assertThat(formatter.format(dates.get(1)), equalTo("11.3.1981")); //alex
-        Assert.assertThat(formatter.format(dates.get(2)), equalTo("17.9.1982")); //joel
+        verifyBirthDates(dates);
 
         // fluent code
         List<java.util.Date> dates2 = jdbc.query("SELECT BIRTH_DATE FROM users ORDER BY id")
                 .fetch(java.util.Date.class);
 
-        Assert.assertThat(dates2, is(notNullValue()));
-        Assert.assertThat(formatter.format(dates2.get(0)), equalTo("20.5.1980")); //mkyong
-        Assert.assertThat(formatter.format(dates2.get(1)), equalTo("11.3.1981")); //alex
-        Assert.assertThat(formatter.format(dates2.get(2)), equalTo("17.9.1982")); //joel
+        verifyBirthDates(dates2);
+    }
+
+    private void verifyBirthDates(List<Date> dates) {
+        SimpleDateFormat formatter = new SimpleDateFormat("d.M.yyyy");
+        Assert.assertThat(dates, is(notNullValue()));
+        Assert.assertThat(formatter.format(dates.get(0)), equalTo("20.5.1980")); //mkyong
+        Assert.assertThat(formatter.format(dates.get(1)), equalTo("11.3.1981")); //alex
+        Assert.assertThat(formatter.format(dates.get(2)), equalTo("17.9.1982")); //joel
     }
 
     @SuppressWarnings("StringBufferReplaceableByString")
