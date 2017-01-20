@@ -57,7 +57,7 @@ There are three typical scenarios of what you want to do:
 
 #### 1. You want to try Fluent Template on existing project (but keep NamedParameterJdbcTemplate too)
 
-If you want to use both `FluentNamedParameterJdbcTemplate` and `NamedParameterJdbcTemplate` in single project - for example because you do not want to brake existing code, but you want to use this new library for newly written code - then please:
+If you want to use both `FluentNamedParameterJdbcTemplate` and `NamedParameterJdbcTemplate` in a single project - for example because you do not want to break existing code, but you want to use this new library for a newly written code - then please:
 
 1. create the `FluentNamedParameterJdbcTemplate` bean using the existing named template
 2. mark the existing NamedParameterJdbcTemplate bean creation with `@Primary` annotation (you will get autowiring issues if you don't)
@@ -84,13 +84,13 @@ public class SpringContextConfiguration {
     }
 }
 ```
-This way both templates use the same `JdbcOperations` backend and correct transaction and connection pool management is ensured even when both templates are used in single transaction.
+This way both templates use the same `JdbcOperations` backend and correct transaction and connection pool management is ensured even when both templates are used in a single transaction.
 
 #### 2. You want to use Fluent Template on existing project exclusively
 
-Go ahead and replace all occurences of the `NamedParameterJdbcTemplate` type with `FluentNamedParameterJdbcTemplate`. It's a safe operation to do because the fluent template extends from `NamedParameterJdbcTemplate` so the compatibility is ensured.
+Go ahead and replace all occurrences of the `NamedParameterJdbcTemplate` type with `FluentNamedParameterJdbcTemplate`. It's a safe operation to do because the fluent template extends from `NamedParameterJdbcTemplate` so the compatibility is ensured.
 
-#### 3. You want use Fluent Template in completely new project 
+#### 3. You want to use Fluent Template in completely new project
 
 Just create the appropriate bean in Spring configuration class:
 
@@ -153,7 +153,7 @@ List<User> teens = jdbc.query("SELECT * FROM users WHERE age BETWEEN :minAge AND
                         .fetch(User.class);
 ```                    
 
-In this example `jdbc` is an instance of `FluentNamedParameterJdbcTemplate` and we are querying for all teen-aged users. Notice the use of the named parameter notation in the SQL query and how the value to this parameter is bound to the prepared statment using `.bind()` method. The `.fetch()` method then executes the query (with parameters bound) and maps the sql output to the Java object using the class type passed to the `.fetch()` method as a parameter. Note that in our example the `User` class is ordinary Java POJO and the underlying algorithm will try map the SQL output to this class using `BeanPropertyRowMapper` (provided by Spring) - that means that the table columns names and `User` class properties names has to match in order for such mapping to be successful. See [BeanPropertyRowMapper documentation](http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jdbc/core/BeanPropertyRowMapper.html) for more details on the matching strategy.
+In this example, `jdbc` is an instance of `FluentNamedParameterJdbcTemplate` and we are querying for all teenaged users. Notice the use of the named parameter notation in the SQL query and how is the value of this parameter bound to the prepared statement using `.bind()` method. The `.fetch()` method then executes the query (with parameters bound) and maps the SQL output to the Java object using the class type passed to the `.fetch()` method as a parameter. Note that in our example the `User` class is ordinary Java POJO and the underlying algorithm will try map the SQL output to this class using `BeanPropertyRowMapper` (provided by Spring) - that means that the table columns names and `User` class properties names have to match in order for such mapping to be successful. See [BeanPropertyRowMapper documentation](http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jdbc/core/BeanPropertyRowMapper.html) for more details on the matching strategy.
 
 If you need to query for just a single column of some primitive type, you don't have to wrap this primitive to a POJO class, you can use your primitive directly:
 
@@ -162,7 +162,7 @@ List<Integer> allIds = jdbc.query("SELECT id FROM users")
                            .fetch(Integer.class);
 ```                    
 
-In a case, that you don't want mapping to rely on `BeanPropertyRowMapper`, you can write your own custom RowMapper and pass it to the `.fetch()` method:
+In a case, that you don't want the mapping to rely on `BeanPropertyRowMapper`, you can write your own custom RowMapper and pass it to the `.fetch()` method:
 
 ```java
 List<User> adults = jdbc.query("SELECT * FROM users where age > :age")
@@ -195,9 +195,9 @@ jdbc.update("UPDATE users SET name = :name WHERE id = :id")
     .bind("id", 2)
     .execute();
 ```
-In this example `jdbc` is an instance of `FluentNamedParameterJdbcTemplate` and we are updating the table users - setting the column `name` to value `Alex` for record with `id=2`. As you can see, you can use named parameters even here and bind the values to these parameters using the `.bind()` methods. The `.execute()` executes the prepared statement (with parameters bound) and returns the number of affected rows.
+In this example, `jdbc` is an instance of `FluentNamedParameterJdbcTemplate` and we are updating the table users - setting the column `name` to value `Alex` for record with `id=2`. As you can see, you can use named parameters even here and bind the values to these parameters using the `.bind()` methods. The `.execute()` executes the prepared statement (with parameters bound) and returns the number of affected rows.
 
-Despite the name of the initial method (`.update()`), you can (and you should :) use this method even for other two statments which update the database state: DELETE and INSERT. If you INSERT new rows to the database and you want the database to return values of the columns which were generated during the INSERT operation, you can use `.executeAndReturnKey()` method. This is a typical situation for tables where the primary key is autogenerated by the database (for example using a sequence):
+Despite the name of the initial method (`.update()`), you can (and you should :) use this method even for other two statements which update the database state: DELETE and INSERT. If you INSERT new rows to the database and you want the database to return values of the columns which were generated during the INSERT operation, you can use `.executeAndReturnKey()` method. This is a typical situation for tables where the primary key is autogenerated by the database (for example using a sequence):
 
 ```java
  Integer key = jdbc.update("INSERT INTO user (name) VALUES (:name)")
