@@ -51,11 +51,48 @@ compile 'com.clevergang.libs:fluent-spring-jdbctemplate:1.0.0'
 
 ## How to set it up
 
-The central class in this library is `FluentNamedParameterJdbcTemplate` which should be set up in spring application context in exactly same way as commonly used `NamedParameterJdbcTemplate` from the spring-jdbc library.
+The central class in this library is `FluentNamedParameterJdbcTemplate` which should be set up in spring application context in exactly same way as commonly used `NamedParameterJdbcTemplate` from the spring-jdbc library. So instead of creating and autowiring bean of type `NamedParameterJdbcTemplate`, create and autowire bean of type `FluentNamedParameterJdbcTemplate` and that's basically it. 
 
-So instead of creating and autowiring bean of type `NamedParameterJdbcTemplate`, create and autowire bean of type `FluentNamedParameterJdbcTemplate` and that's it. If you project already uses `NamedParameterJdbcTemplate` and you want to switch to our fluent version, then go ahead and replace all occurences of the `NamedParameterJdbcTemplate` type with `FluentNamedParameterJdbcTemplate`. It's a safe operation to do because it's backwards compatible with `NamedParameterJdbcTemplate`...
+There are three typical scenarios of what you want to do:
 
-If you want to use `FluentNamedParameterJdbcTemplate` in completely new project, then just create the bean in Spring configuration class:
+#### 1. You want to try Fluent Template on existing project (but keep NamedParameterJdbcTemplate too)
+
+If you want to use both `FluentNamedParameterJdbcTemplate` and `NamedParameterJdbcTemplate` in single project - for example because you do not want to brake existing code, but you want to use this new library for newly written code - then please:
+
+1. create the `FluentNamedParameterJdbcTemplate` bean using the existing named template
+2. mark the existing NamedParameterJdbcTemplate bean creation with `@Primary` annotation (you will get autowiring issues if you don't)
+
+Like this:
+
+```java
+@Configuration
+public class SpringContextConfiguration {
+
+    ... (data source creation here)...
+
+    @Bean
+    @Primary   // !! This is important
+    public NamedParameterJdbcTemplate getJdbcTemplate(DataSource dataSource) {
+        return new NamedParameterJdbcTemplate(dataSource);
+    }
+
+
+    @Bean
+    public FluentNamedParameterJdbcTemplate getFluentJdbcTemplate(NamedParameterJdbcTemplate existingJdbcTemplate) {
+        //!! use JdbcOperations constructor
+        return new FluentNamedParameterJdbcTemplate(existingJdbcTemplate.getJdbcOperations());   
+    }
+}
+```
+This way both templates use the same `JdbcOperations` backend and correct transaction and connection pool management is ensured even when both templates are used in single transaction.
+
+#### 2. You want to use Fluent Template on existing project exclusively
+
+Go ahead and replace all occurences of the `NamedParameterJdbcTemplate` type with `FluentNamedParameterJdbcTemplate`. It's a safe operation to do because the fluent template extends from `NamedParameterJdbcTemplate` so the compatibility is ensured.
+
+#### 3. You want use Fluent Template in completely new project 
+
+Just create the appropriate bean in Spring configuration class:
 
 ```java
 @Configuration
@@ -101,9 +138,9 @@ public class UsersDAO {
 
 ## How to use it
 
-First of all, `FluentNamedParameterJdbcTemplate` really extends from class `NamedParameterJdbcTemplate`, so all of the methods offered by the spring template are present here as well. Check documentation of these methods [in Spring documentation here](https://docs.spring.io/spring/docs/current/spring-framework-reference/html/jdbc.html#jdbc-NamedParameterJdbcTemplate)
+First of all, `FluentNamedParameterJdbcTemplate` really extends from class `NamedParameterJdbcTemplate`, so all of the methods offered by the Spring template are present here as well. Check documentation of these methods [in Spring documentation here](https://docs.spring.io/spring/docs/current/spring-framework-reference/html/jdbc.html#jdbc-NamedParameterJdbcTemplate)
 
-So Beside all of the methods present in usual spring jdbc template our library offers two additional methods, which you can use for "fluent querying":
+So besides all of the methods present in usual Spring JDBC template our library offers two additional methods, which you can use for "fluent querying":
 
 ### Query database (SELECT operations)
 
