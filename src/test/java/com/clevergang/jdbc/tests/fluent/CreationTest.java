@@ -25,6 +25,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -48,6 +50,9 @@ public class CreationTest {
     @Autowired
     private DataSource dataSource;
 
+    @Autowired
+    private NamedParameterJdbcTemplate namedTemplate;
+
     @Test
     public void templateWorksWhenCustomJdbcTemplateIsUsed() {
         // create the template completely outside of the spring application context
@@ -65,6 +70,12 @@ public class CreationTest {
                 .execute();
 
         Assert.assertThat(updatedRows, equalTo(3));
+    }
+
+    @Test
+    public void testNamedTemplateStillWorks() {
+        Integer integer = namedTemplate.queryForObject("select count(*) from USERS", EmptySqlParameterSource.INSTANCE, Integer.class);
+        Assert.assertThat(integer, equalTo(3));
     }
 
 }

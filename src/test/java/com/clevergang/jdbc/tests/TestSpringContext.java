@@ -19,6 +19,8 @@ package com.clevergang.jdbc.tests;
 import com.clevergang.jdbc.FluentNamedParameterJdbcTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -50,7 +52,15 @@ public class TestSpringContext {
     }
 
     @Bean
-    public FluentNamedParameterJdbcTemplate getJdbcTemplate(DataSource dataSource) {
-        return new FluentNamedParameterJdbcTemplate(dataSource);
+    @Primary
+    public NamedParameterJdbcTemplate getJdbcTemplate(DataSource dataSource) {
+        return new NamedParameterJdbcTemplate(dataSource);
     }
+
+
+    @Bean
+    public FluentNamedParameterJdbcTemplate getFluentJdbcTemplate(NamedParameterJdbcTemplate existingJdbcTemplate) {
+        return new FluentNamedParameterJdbcTemplate(existingJdbcTemplate.getJdbcOperations());
+    }
+
 }
