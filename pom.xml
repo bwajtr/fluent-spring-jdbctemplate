@@ -6,7 +6,7 @@
 
     <groupId>com.clevergang.libs</groupId>
     <artifactId>fluent-spring-jdbctemplate</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
 
     <name>Fluent syntax for Spring JDBCTemplate</name>
     <packaging>jar</packaging>
