@@ -35,7 +35,8 @@ import java.util.Map;
  * }</pre>
  *
  * @author Bretislav Wajtr
- * @implNote Not thread safe
+ *
+ * NOT THREAD SAFE  
  */
 public class FluentUpdateBuilder extends AbstractFluentBuilder<FluentUpdateBuilder> {
 
@@ -82,6 +83,7 @@ public class FluentUpdateBuilder extends AbstractFluentBuilder<FluentUpdateBuild
      * }</pre>
      *
      * @param keyName name of the column that will have key generated for it
+     * @param <T> Return type
      * @return the generated key
      * @throws org.springframework.dao.DataAccessException if there is any problem issuing the update
      * @throws InvalidDataAccessApiUsageException if multiple keys are encountered (we normally expect just single key to be generated).

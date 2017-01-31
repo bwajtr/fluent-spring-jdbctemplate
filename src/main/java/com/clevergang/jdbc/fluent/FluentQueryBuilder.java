@@ -1,18 +1,3 @@
-/*
- * Copyright 2016 Bretislav Wajtr
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 package com.clevergang.jdbc.fluent;
 
@@ -36,7 +21,8 @@ import java.util.List;
  * }</pre>
  *
  * @author Bretislav Wajtr
- * @implNote Not thread safe
+ *
+ * NOT THREAD SAFE
  */
 public class FluentQueryBuilder extends AbstractFluentBuilder<FluentQueryBuilder> {
 
@@ -58,7 +44,7 @@ public class FluentQueryBuilder extends AbstractFluentBuilder<FluentQueryBuilder
 
     /**
      * Executes prepared SQL query, returning single result object. The query is expected to be a single row query; the SQL ResultSet will be mapped
-     * to Java class using provided RowMapper. Example:<br/>
+     * to Java class using provided RowMapper. Example:
      * <pre>{@code
      * EmployeeInfo user = jdbc.query("SELECT count(*) as count, avg(salary) as avg_salary FROM employees")
      *     .fetchOne((rs, rowNum) -> {
@@ -70,6 +56,7 @@ public class FluentQueryBuilder extends AbstractFluentBuilder<FluentQueryBuilder
      * }</pre>
      *
      * @param rowMapper RowMapper to use for JDBC ResultSet mapping to java object
+     * @param <T> Return type
      * @return Returns single mapped object
      * @throws org.springframework.dao.IncorrectResultSizeDataAccessException if the query does not return exactly one row, or does not return exactly
      *                                                                        one column in that row
@@ -82,7 +69,7 @@ public class FluentQueryBuilder extends AbstractFluentBuilder<FluentQueryBuilder
     }
 
     /**
-     * Executes prepared SQL query, returning single result object. This method accepts two types of classes a parameter:<br/>
+     * Executes prepared SQL query, returning single result object. This method accepts two types of classes a parameter:
      * <ul>
      * <li>In a case that the parameter is one of the primitive wrapper classes or one
      * of the classes which are directly convertible to the SQL types, then the this method
@@ -105,6 +92,7 @@ public class FluentQueryBuilder extends AbstractFluentBuilder<FluentQueryBuilder
      * </ul>
      *
      * @param resultType the type that the result object is expected to match
+     * @param <T> Return type
      * @return Returns single mapped object
      * @throws org.springframework.dao.IncorrectResultSizeDataAccessException if the query does not return exactly one row, or in case of primitive types does not return exactly
      *                                                                        one column in that row
@@ -132,7 +120,7 @@ public class FluentQueryBuilder extends AbstractFluentBuilder<FluentQueryBuilder
 
 
     /**
-     * Executes prepared SQL query, returning list of objects. This method accepts two types of classes as a parameter:<br/>
+     * Executes prepared SQL query, returning list of objects. This method accepts two types of classes as a parameter:
      * <ul>
      * <li>In a case that the parameter is one of the primitive wrapper classes or one
      * of the classes which are directly convertible to the SQL types, then the this method
@@ -154,6 +142,7 @@ public class FluentQueryBuilder extends AbstractFluentBuilder<FluentQueryBuilder
      * </ul>
      *
      * @param resultType the type that the result object is expected to match
+     * @param <T> Return type
      * @return Returns single mapped object
      * @throws org.springframework.dao.IncorrectResultSizeDataAccessException if the query does not return exactly one row, or in case of primitive types does not return exactly
      *                                                                        one column in that row
@@ -184,6 +173,7 @@ public class FluentQueryBuilder extends AbstractFluentBuilder<FluentQueryBuilder
      * }</pre>
      *
      * @param rowMapper RowMapper to use for JDBC ResultSet mapping to java object
+     * @param <T> Return type
      * @return the result List, containing mapped objects
      * @throws org.springframework.dao.DataAccessException  if the query fails
      */
